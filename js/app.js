@@ -337,12 +337,21 @@ var App = (function () {
 
   /* ---------- nav ---------- */
 
+  // Where the club is online, from content.js: Instagram, LinkedIn, and the email once it has one.
+  function socialLinks() {
+    var s = CONTENT.social || {};
+    return [['Instagram', s.instagram], ['LinkedIn', s.linkedin], ['Email us', s.email ? 'mailto:' + s.email : '']]
+      .filter(function (l) { return l[1]; })
+      .map(function (l) { return '<a href="' + esc(l[1]) + '"' + (l[1].indexOf('mailto:') === 0 ? ' class="ph-no-capture"' : ' target="_blank" rel="noopener"') + '>' + l[0] + '</a>'; }).join('');
+  }
+
   function renderNav(route) {
     var links = [['about', 'About'], ['meetings', 'Meetings'], ['partners', 'Partners']];
     if (state.me) {
       links = [['members', 'Directory'], ['events', 'Events'], ['board', 'Board'], ['me', 'My profile']].filter(function (l) { return routeOn(l[0]); });
       if (state.me.tier === 'leader') links.push(['admin', 'Admin' + (state.data && state.data.pending ? ' (' + state.data.pending + ')' : '')]);
     }
+    $('#footSocial').innerHTML = socialLinks();
     // Signed in, the public pages step back to the footer.
     $('#footLinks').innerHTML = state.me ? [['about', 'About'], ['meetings', 'Meetings'], ['partners', 'Partners'], ['join', 'Join']].map(function (l) { return '<a href="' + l[0] + '">' + l[1] + '</a>'; }).join('') : '';
     var html = links.map(function (l) { return '<a href="' + l[0] + '" class="' + (route === l[0] ? 'active' : '') + '">' + l[1] + '</a>'; }).join('');
@@ -498,6 +507,6 @@ var App = (function () {
     $: $, $$: $$, esc: esc, state: state, icon: icon, page: page, avatar: avatar, tags: tags, roleLine: roleLine, toast: toast, go: go, loading: loading,
     errorBlock: errorBlock, setBusy: setBusy, wireRetry: wireRetry, clearErrors: clearErrors, showErrors: showErrors, longDate: longDate, signInWithCode: signInWithCode, pendingCode: pendingCode, setPendingCode: setPendingCode, devSignIn: devSignIn,
     openSheet: openSheet, closeSheet: closeSheet, route: route, render: render, refresh: refresh, refreshPublic: refreshPublic, replaceItem: replaceItem, saveData: saveData,
-    siteLink: siteLink, toPath: toPath, copyText: copyText, downloadFile: downloadFile, photoCache: photoCache, writeJson: writeJson, PHOTOS_KEY: PHOTOS_KEY, fetchPhotos: fetchPhotos, start: start
+    siteLink: siteLink, toPath: toPath, socialLinks: socialLinks, copyText: copyText, downloadFile: downloadFile, photoCache: photoCache, writeJson: writeJson, PHOTOS_KEY: PHOTOS_KEY, fetchPhotos: fetchPhotos, start: start
   };
 })();
