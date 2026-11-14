@@ -306,6 +306,10 @@ input[type=checkbox] { width: 1.125rem; height: 1.125rem; margin: 0; cursor: poi
 /* ---------- about ---------- */
 
 .about-top .lead { margin: 1rem 0 0; }
+@media (min-width: 1024px) {
+  .about-top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: var(--cols-gap); align-items: start; }
+  .about-top .lead { margin: 0.5rem 0 0; }
+}
 .about-people { margin-top: 4.5rem; }
 .about-people .lead { margin: 1rem 0 0; }
 /* Three a row from a laptop, two on a phone: the six leaders always make full rows. */
