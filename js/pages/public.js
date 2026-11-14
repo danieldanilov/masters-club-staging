@@ -36,7 +36,7 @@
           return '<div class="event-row"><div class="date" aria-label="' + esc(m.day + ' ' + m.month) + '"><b>' + esc(m.day) + '</b><span>' + esc(m.month.slice(0, 3)) + '</span></div>' +
             '<span class="body"><h3 class="title" dir="auto">' + esc(m.title) + '</h3><span class="muted" dir="auto">' + esc(m.note) + '</span></span></div>';
         }).join('') + '</section>' : '') +
-      '<section class="follow"><h2>Follow the club</h2><p class="follow-links">' + App.socialLinks() + '</p></section>' +
+      '<section class="follow"><h2>Follow the club</h2><div class="follow-links">' + App.socialLinks(true) + '</div></section>' +
       '</div>';
   }
 
@@ -216,20 +216,19 @@
   }
 
   // The same screen for everyone who gave an email: the code for members, the application for
-  // everyone else.
+  // everyone else. The address itself is the way back to the email step.
   function checkStep(flow, email, waitNote) {
     var s = info().settings || {};
     var open = s.applications_open !== false;
-    var minutes = Math.round(Core.CODE_LIMITS.ttlMs / 60000);
     flow.innerHTML = '<h2>Check your email</h2>' +
-      '<p class="muted small">We emailed your code to <b class="ph-sensitive">' + esc(email) + '</b> <span class="nowrap">(<button class="link" type="button" data-change>change email</button>)</span>. It works for ' + minutes + ' minutes.</p>' +
+      '<p class="muted small">We sent you an email at <button class="link wrap ph-sensitive" type="button" data-change title="Use another email">' + esc(email) + '</button>.</p>' +
       '<form class="code-form" id="codeForm" novalidate>' +
-      '<label>Code from the email<input type="text" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="7" required class="code-input"><span class="field-error" data-err="code"></span></label>' +
+      '<label>Member? Enter the code from your email.<input type="text" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="7" required class="code-input"><span class="field-error" data-err="code"></span></label>' +
       '<button class="btn gold" type="submit">Sign in</button>' +
       '<button class="btn quiet" type="button" data-resend disabled>Send a new code</button>' +
       '<p class="field-error" data-resend-note role="status"></p></form>' +
       '<div class="join-apply">' + (open
-        ? '<p>Not a member? <a class="link" href="' + esc(s.apply_url || CONTENT.applyUrl) + '" target="_blank" rel="noopener" data-apply>Start your application now</a></p>'
+        ? '<p>Not a member?</p><a class="btn navy" href="' + esc(s.apply_url || CONTENT.applyUrl) + '" target="_blank" rel="noopener" data-apply>Start your application now</a>'
         : '<p>Not a member? Applications are closed right now.</p>') + '</div>';
     var apply = $('[data-apply]', flow);
     if (apply) apply.addEventListener('click', function () { Analytics.track('apply clicked', { source: 'join' }); });

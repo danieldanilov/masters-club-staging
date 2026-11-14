@@ -338,11 +338,23 @@ var App = (function () {
   /* ---------- nav ---------- */
 
   // Where the club is online, from content.js: Instagram, LinkedIn, and the email once it has one.
-  function socialLinks() {
+  // The club's links, each with its icon: a line of them in the footer, and as cards (with the
+  // handle under the name) for "Follow the club" on Home.
+  var SOCIAL_ICONS = {
+    Instagram: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.25" cy="6.75" r="0.75" fill="currentColor"/>',
+    LinkedIn: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10.5V16.5M8 7.5v.01M12 16.5v-6M12 13.25c0-1.5 1-2.75 2.5-2.75s2 1 2 2.5v3.5"/>',
+    'Email us': '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 7l8.5 6 8.5-6"/>'
+  };
+  function socialLinks(cards) {
     var s = CONTENT.social || {};
-    return [['Instagram', s.instagram], ['LinkedIn', s.linkedin], ['Email us', s.email ? 'mailto:' + s.email : '']]
+    return [['Instagram', s.instagram, '@' + String(s.instagram || '').replace(/\/+$/, '').split('/').pop()], ['LinkedIn', s.linkedin, 'The Masters Club'], ['Email us', s.email ? 'mailto:' + s.email : '', s.email]]
       .filter(function (l) { return l[1]; })
-      .map(function (l) { return '<a href="' + esc(l[1]) + '"' + (l[1].indexOf('mailto:') === 0 ? ' class="ph-no-capture"' : ' target="_blank" rel="noopener"') + '>' + l[0] + '</a>'; }).join('');
+      .map(function (l) {
+        var mail = l[1].indexOf('mailto:') === 0;
+        var icon = '<svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + SOCIAL_ICONS[l[0]] + '</svg>';
+        return '<a href="' + esc(l[1]) + '" class="' + (cards ? 'follow-card' : '') + (mail ? ' ph-no-capture' : '') + '"' + (mail ? '' : ' target="_blank" rel="noopener"') + '>' + icon +
+          (cards ? '<span><b>' + l[0] + '</b><small>' + esc(l[2]) + '</small></span>' : l[0]) + '</a>';
+      }).join('');
   }
 
   function renderNav(route) {
