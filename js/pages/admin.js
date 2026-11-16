@@ -8,16 +8,47 @@
     return page('<div class="page-head"><h1>Admin</h1></div><div id="adminBody">' + loading('Loading') + '</div>');
   }
 
+  // What's on screen, and whether the leader has typed or ticked anything since it was drawn.
+  var shown = '';
+  var touched = false;
+
+  // Opening Admin shows the copy fetched after sign-in at once, then asks for a fresh one (F133).
+  // A fresh copy that differs is drawn, unless the leader has started typing: their words win, and
+  // the next visit shows it.
   async function wireAdmin() {
     if (state.me.tier !== 'leader') return;
-    var data;
+    if (state.admin) drawAdmin(state.admin);
+    var data = await fetchAdmin(false, !state.admin);
+    if (!data || !$('#adminBody')) return;
+    if (JSON.stringify(data) !== shown && !touched) drawAdmin(data);
+  }
+
+  // After a change: fetch what's true now and draw it, whatever was on screen.
+  async function reloadAdmin() {
+    var data = await fetchAdmin(true, true);
+    if (data && $('#adminBody')) drawAdmin(data);
+  }
+
+  async function fetchAdmin(fresh, showError) {
     try {
-      data = await Api.call('admin.overview');
+      return await App.loadAdmin(fresh);
     } catch (e) {
-      if (e.code === 'unauthorized' || e.code === 'forbidden') return App.refresh().then(App.render, App.render);
-      $('#adminBody').innerHTML = errorBlock(e);
-      return wireRetry();
+      if (e.code === 'unauthorized' || e.code === 'forbidden') { App.refresh().then(App.render, App.render); return null; }
+      if (showError && $('#adminBody')) {
+        $('#adminBody').innerHTML = errorBlock(e);
+        wireRetry();
+      }
+      return null;
     }
+  }
+
+  function drawAdmin(data) {
+    shown = JSON.stringify(data);
+    touched = false;
+    var body = $('#adminBody');
+    var mark = function () { touched = true; };
+    body.oninput = mark;
+    body.onchange = mark;
     var tiers = Core.TIERS;
     var tierSelect = function (attr, val) {
       return '<select ' + attr + '>' + tiers.map(function (t) { return '<option value="' + t + '" ' + (val === t ? 'selected' : '') + '>' + esc(TIER_LABEL[t]) + '</option>'; }).join('') + '</select>';
@@ -141,7 +172,7 @@
         Analytics.track('cohort ended', { cohort: cohort, moved: r.moved });
         toast(r.moved + ' moved to the community');
         await App.refresh();
-        wireAdmin();
+        reloadAdmin();
       } catch (err) { setBusy(e.target, false); toast(err.message); }
     });
     var sf = $('#settingsForm');
@@ -230,7 +261,7 @@
           Analytics.track('access request handled', { decision: decision, linked: !!$('[data-link]', row).value });
           App.refresh().catch(function () {});
           toast(decision === 'approve' ? 'Approved, and we emailed them' : 'Declined');
-          wireAdmin();
+          reloadAdmin();
         } catch (e) { setBusy(btn, false); toast(e.message); }
       }
       $('[data-approve]', row).addEventListener('click', function (e) { decide('approve', e.target); });
@@ -249,7 +280,7 @@
         Analytics.track('members imported', { added: r.added, updated: r.updated || 0, skipped: r.skipped.length, tier: $('#bulkTier').value });
         App.refresh().catch(function () {});
         toast(r.added + (r.updated ? ' added, ' + r.updated + ' updated' : ' added'));
-        await wireAdmin();
+        await reloadAdmin();
         if (r.skipped.length) {
           $('#bulkResult').innerHTML = '<div class="note warn">Skipped:<br>' + r.skipped.map(function (s) { return esc(s.line) + ': ' + esc(s.reason); }).join('<br>') + '</div>';
         }
