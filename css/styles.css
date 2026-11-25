@@ -383,6 +383,7 @@ input[type=checkbox] { width: 1.125rem; height: 1.125rem; margin: 0; cursor: poi
 .join > .panel { border-radius: 0; }
 .join-club h1 { margin-bottom: 1rem; }
 .join-lead { margin: 0; max-width: var(--measure); }
+.join-lead + .join-lead { margin-top: 1rem; }
 .join-gets { display: grid; gap: 1.5rem; margin: 2rem 0 0; padding-top: 2rem; border-top: 1px solid var(--navy-3); }
 .join-gets dt { font-family: var(--display); font-size: var(--s-lead); margin-bottom: 0.5rem; }
 .join-gets dd { margin: 0; max-width: var(--measure); }
@@ -397,6 +398,8 @@ input[type=checkbox] { width: 1.125rem; height: 1.125rem; margin: 0; cursor: poi
 .join-apply { display: grid; gap: 0.5rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--mist-2); }
 .join-apply p { font-size: var(--s-small); font-weight: 700; color: var(--ink); }
 .join-apply .btn { width: 100%; }
+.join-apply .on-list { font-size: var(--s-lead); font-weight: 400; }
+.join-apply .on-list strong { font-weight: 700; }
 /* On a phone the form comes first, so a member signs in without scrolling past the club. */
 @media (max-width: 899px) { .join-form { order: -1; } }
 /* The sign-in link's page and the application hand-off: one small card in the middle. */
