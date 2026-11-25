@@ -91,7 +91,7 @@
     // button beside Add people in Members (F144).
     var interested = data.interested || [];
     var interestHtml =
-      '<section class="admin-section" id="s-interest"' + (listing ? '' : ' hidden') + '><h2>The list for the next cohort</h2>' +
+      '<section class="admin-section tool-drawer" id="s-interest"' + (listing ? '' : ' hidden') + '><h2>The list for the next cohort</h2>' +
       '<p class="muted measure">Everyone who left their email on Join while applications were closed. When the next cohort opens, send them the application link.</p>' +
       (interested.length ? '<div class="row-actions mt-2"><button class="btn quiet small" id="copyInterested">Copy the emails</button></div><div class="mt-2">' + interested.map(function (r) {
         return '<div class="request"><div><span class="ph-sensitive">' + esc(r.email) + '</span> <span class="muted small">' + esc(App.longDate(r.added_on)) + '</span></div></div>';
@@ -130,7 +130,7 @@
       '<button class="btn gold small" type="button" id="addToggle" aria-expanded="' + adding + '" aria-controls="s-add">Add people</button></div>' +
       interestHtml +
 
-      '<section class="admin-section add-people" id="s-add"' + (adding ? '' : ' hidden') + '><h2>Add people</h2><div class="form-grid form-narrow">' +
+      '<section class="admin-section tool-drawer" id="s-add"' + (adding ? '' : ' hidden') + '><h2>Add people</h2><div class="form-grid form-narrow">' +
       '<label>One per line as "Name, email", or paste rows from a sheet, header row included <span class="hint">From a sheet we read only name, email, position, company, city, program, LinkedIn, interests, tier and cohort. Everything else in the paste is ignored, and people already here only get what\'s empty filled in.</span><textarea id="bulk" rows="5" placeholder="Shir Amar, shir.amar@gmail.com&#10;Ben Tal"></textarea></label>' +
       '<div class="add-row"><label>Tier ' + tierSelect('id="bulkTier"', 'club') + '</label>' +
       '<label>Cohort number <input type="text" id="bulkCohort" inputmode="numeric" placeholder="2" maxlength="20" class="input-short"></label>' +
